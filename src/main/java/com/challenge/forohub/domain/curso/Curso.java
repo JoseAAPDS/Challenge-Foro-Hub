@@ -1,4 +1,4 @@
-package com.challenge.forohub.domain;
+package com.challenge.forohub.domain.curso;
 
 import jakarta.persistence.*;
 import lombok.*;
