@@ -25,10 +25,11 @@ public class Topico {
     private LocalDateTime fechaCreacion;
     private Boolean activo;
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "usuario_id")
+    @JoinColumn(name = "usuario_id")
     private Usuario autor;
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "curso_id")
+    @JoinColumn(name = "curso_id")
     private Curso curso;
+    @OneToMany
     private List<Respuesta> respuestas;
 }
