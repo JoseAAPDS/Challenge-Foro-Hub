@@ -1,5 +1,6 @@
 package com.challenge.forohub.domain.topico;
 
+import com.challenge.forohub.domain.Curso;
 import com.challenge.forohub.domain.usuario.Usuario;
 
 import java.time.LocalDateTime;
