@@ -19,5 +19,5 @@ public class Usuario {
     private String contrasena;
     @Enumerated
     private Perfiles perfil;
-
+    private Boolean activo;
 }

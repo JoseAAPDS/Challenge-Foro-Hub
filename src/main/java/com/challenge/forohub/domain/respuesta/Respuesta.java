@@ -27,5 +27,6 @@ public class Respuesta {
     @JoinColumn(name = "usuario_id")
     private Usuario autor;
     private Boolean solucion;
+    private Boolean activo;
 
 }
