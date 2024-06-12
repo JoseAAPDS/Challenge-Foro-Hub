@@ -20,4 +20,13 @@ public class Usuario {
     @Enumerated
     private Perfiles perfil;
     private Boolean activo;
+
+//    public Usuario(Long id, String nombre, String correoElectronico, String contrasena, Perfiles perfil, Boolean activo) {
+//        this.id = id;
+//        this.nombre = nombre;
+//        this.correoElectronico = correoElectronico;
+//        this.contrasena = contrasena;
+//        this.perfil = perfil;
+//        this.activo = activo;
+//    }
 }

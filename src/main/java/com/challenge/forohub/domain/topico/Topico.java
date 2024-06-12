@@ -30,6 +30,13 @@ public class Topico {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "curso_id")
     private Curso curso;
-    @OneToMany
-    private List<Respuesta> respuestas;
+
+    public Topico(DatosRegistroTopico datosRegistroTopico, Usuario autor, Curso curso) {
+        this.titulo = datosRegistroTopico.titulo();
+        this.mensaje = datosRegistroTopico.mensaje();
+        this.fechaCreacion = datosRegistroTopico.fecha();
+        this.activo = true;
+        this.autor = autor;
+        this.curso = curso;
+    }
 }
