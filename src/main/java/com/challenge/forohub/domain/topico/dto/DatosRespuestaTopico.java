@@ -1,4 +1,4 @@
-package com.challenge.forohub.domain.topico;
+package com.challenge.forohub.domain.topico.dto;
 
 public record DatosRespuestaTopico(
         Long id,

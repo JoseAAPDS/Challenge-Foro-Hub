@@ -1,6 +1,8 @@
 package com.challenge.forohub.domain.topico;
 
 import com.challenge.forohub.domain.curso.Curso;
+import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
+import com.challenge.forohub.domain.topico.dto.DatosRespuestaTopico;
 import com.challenge.forohub.domain.usuario.Perfiles;
 import com.challenge.forohub.domain.usuario.Usuario;
 import org.springframework.stereotype.Service;

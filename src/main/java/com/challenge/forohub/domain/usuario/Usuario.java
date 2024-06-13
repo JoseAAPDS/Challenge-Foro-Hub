@@ -1,5 +1,7 @@
 package com.challenge.forohub.domain.usuario;
 
+import com.challenge.forohub.domain.usuario.dto.DatosActualizarUsuario;
+import com.challenge.forohub.domain.usuario.dto.DatosRegistroUsuario;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,16 +19,29 @@ public class Usuario {
     private String nombre;
     private String correoElectronico;
     private String contrasena;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Perfiles perfil;
     private Boolean activo;
 
-//    public Usuario(Long id, String nombre, String correoElectronico, String contrasena, Perfiles perfil, Boolean activo) {
-//        this.id = id;
-//        this.nombre = nombre;
-//        this.correoElectronico = correoElectronico;
-//        this.contrasena = contrasena;
-//        this.perfil = perfil;
-//        this.activo = activo;
-//    }
+    public Usuario(DatosRegistroUsuario datosRegistroUsuario) {
+        this.nombre = datosRegistroUsuario.nombre();
+        this.correoElectronico = datosRegistroUsuario.correoElectronico();
+        this.contrasena = datosRegistroUsuario.contrasena();
+        this.perfil = datosRegistroUsuario.perfil();
+        this.activo = true;
+    }
+
+    public void actualizarDatos(DatosActualizarUsuario datosActualizarUsuario) {
+        if (datosActualizarUsuario.nombre() != null){
+            this.nombre = datosActualizarUsuario.nombre();
+        }
+        if (datosActualizarUsuario.correoElectronico() != null){
+            this.correoElectronico = datosActualizarUsuario.correoElectronico();
+        }
+
+    }
+
+    public void desactivarUsuario() {
+        this.activo = false;
+    }
 }

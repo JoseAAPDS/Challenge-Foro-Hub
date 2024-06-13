@@ -1,7 +1,7 @@
 package com.challenge.forohub.controller;
 
-import com.challenge.forohub.domain.topico.DatosRegistroTopico;
-import com.challenge.forohub.domain.topico.DatosRespuestaTopico;
+import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
+import com.challenge.forohub.domain.topico.dto.DatosRespuestaTopico;
 import com.challenge.forohub.domain.topico.TopicoService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

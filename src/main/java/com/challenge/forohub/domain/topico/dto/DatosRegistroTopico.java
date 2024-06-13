@@ -1,8 +1,6 @@
-package com.challenge.forohub.domain.topico;
+package com.challenge.forohub.domain.topico.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 public record DatosRegistroTopico(
@@ -11,11 +9,11 @@ public record DatosRegistroTopico(
         String titulo,
         @NotBlank
         String mensaje,
-        @NotNull
+        @NotBlank
         LocalDateTime fecha,
-        @NotNull
+        @NotBlank
         String idAutor,
-        @NotNull
+        @NotBlank
         String idCurso) {
 
 

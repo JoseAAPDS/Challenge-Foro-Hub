@@ -1,13 +1,12 @@
 package com.challenge.forohub.domain.topico;
 
 import com.challenge.forohub.domain.curso.Curso;
-import com.challenge.forohub.domain.respuesta.Respuesta;
+import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
 import com.challenge.forohub.domain.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
