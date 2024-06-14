@@ -1,6 +1,7 @@
 package com.challenge.forohub.domain.topico;
 
 import com.challenge.forohub.domain.curso.Curso;
+import com.challenge.forohub.domain.topico.dto.DatosActualizarTopico;
 import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
 import com.challenge.forohub.domain.usuario.Usuario;
 import jakarta.persistence.*;
@@ -37,5 +38,18 @@ public class Topico {
         this.activo = true;
         this.autor = autor;
         this.curso = curso;
+    }
+
+    public void actualizarDatos(DatosActualizarTopico datosActualizarTopico) {
+        if(datosActualizarTopico.titulo() != null){
+            this.titulo = datosActualizarTopico.titulo();
+        }
+        if (datosActualizarTopico.mensaje() != null){
+            this.mensaje = datosActualizarTopico.mensaje();
+        }
+    }
+
+    public void desactivarTopico() {
+        this.activo = false;
     }
 }
