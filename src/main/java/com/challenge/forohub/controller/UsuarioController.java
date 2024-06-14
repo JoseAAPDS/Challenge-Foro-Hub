@@ -40,7 +40,7 @@ public class UsuarioController {
 
     @PutMapping
     @Transactional
-    public ResponseEntity actualizarUsuario(@RequestBody @Valid DatosActualizarUsuario datosActualizarUsuario){
+    public ResponseEntity<DatosRespuestaUsuario> actualizarUsuario(@RequestBody @Valid DatosActualizarUsuario datosActualizarUsuario){
         return ResponseEntity.ok(usuarioService.actualizarUsuario(datosActualizarUsuario));
     }
 

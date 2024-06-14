@@ -17,7 +17,7 @@ public class TopicoService {
 
     public DatosRespuestaTopico registrarNuevoTopico(DatosRegistroTopico datosRegistroTopico){
         var usuario = new Usuario(1L,"Alejandra Cueva", "alejandra.cueva@correo.com", "contraseña", Perfiles.ESTUDIANTE, true);
-        var curso = new Curso(1L,"Spring Boot", "Programación");
+        var curso = new Curso(1L,"Spring Boot", "Programación", true);
         Topico nuevoTopico = topicoRepository.save(new Topico(datosRegistroTopico, usuario, curso));
 
         DatosRespuestaTopico respuestaTopico = new DatosRespuestaTopico(nuevoTopico.getId(), nuevoTopico.getTitulo(),
