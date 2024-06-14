@@ -1,5 +1,7 @@
 package com.challenge.forohub.domain.respuesta;
 
+import com.challenge.forohub.domain.respuesta.dto.DatosActualizarRespuesta;
+import com.challenge.forohub.domain.respuesta.dto.DatosRegistroRespuesta;
 import com.challenge.forohub.domain.topico.Topico;
 import com.challenge.forohub.domain.usuario.Usuario;
 import jakarta.persistence.*;
@@ -29,4 +31,26 @@ public class Respuesta {
     private Boolean solucion;
     private Boolean activo;
 
+    public Respuesta(DatosRegistroRespuesta datosRegistroRespuesta, Usuario autor, Topico topico) {
+        this.mensaje = datosRegistroRespuesta.mensaje();
+        this.topico = topico;
+        this.fechaCreacion = datosRegistroRespuesta.fechaCreacion();
+        this.autor = autor;
+        this.activo = true;
+        this.solucion = false;
+    }
+
+    public void actualizarDatos(DatosActualizarRespuesta datosActualizarRespuesta) {
+        if (datosActualizarRespuesta.mensaje() != null){
+            this.mensaje = datosActualizarRespuesta.mensaje();
+        }
+    }
+
+    public void desactivarRespuesta() {
+        this.activo = false;
+    }
+
+    public void marcarSolucion() {
+        this.solucion = true;
+    }
 }
