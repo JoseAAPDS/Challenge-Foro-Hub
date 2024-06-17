@@ -3,6 +3,7 @@ package com.challenge.forohub.domain.usuario;
 import com.challenge.forohub.domain.usuario.dto.DatosActualizarUsuario;
 import com.challenge.forohub.domain.usuario.dto.DatosRegistroUsuario;
 import com.challenge.forohub.domain.usuario.dto.DatosRespuestaUsuario;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -31,19 +32,28 @@ public class UsuarioService {
     }
 
     public DatosRespuestaUsuario actualizarUsuario(DatosActualizarUsuario datosActualizarUsuario) {
-        Usuario usuario = usuarioRepository.getReferenceById(datosActualizarUsuario.id());
+        Usuario usuario = usuarioRepository.findByIdActivoTrue(datosActualizarUsuario.id());
+        if (usuario == null){
+            throw new EntityNotFoundException("Usuario with id " + datosActualizarUsuario.id() + " not found");
+        }
         usuario.actualizarDatos(datosActualizarUsuario);
         return new DatosRespuestaUsuario(usuario.getId(), usuario.getNombre(), usuario.getCorreoElectronico(),
                 usuario.getPerfil().toString().toLowerCase());
     }
 
     public void desactivarUsuario(Long id) {
-        Usuario usuario = usuarioRepository.getReferenceById(id);
+        Usuario usuario = usuarioRepository.findByIdActivoTrue(id);
+        if (usuario == null){
+            throw new EntityNotFoundException("Usuario with id " + id + " not found");
+        }
         usuario.desactivarUsuario();
     }
 
     public DatosRespuestaUsuario buscarUsuarioId(Long id) {
-        Usuario usuario = usuarioRepository.getReferenceById(id);
+        Usuario usuario = usuarioRepository.findByIdActivoTrue(id);
+        if (usuario == null){
+            throw new EntityNotFoundException("Usuario with id " + id + " not found");
+        }
         return new DatosRespuestaUsuario(usuario);
     }
 }

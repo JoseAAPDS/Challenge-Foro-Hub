@@ -34,8 +34,10 @@ public class TopicoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<DatosRespuestaTopico>> listadoTopicos(@PageableDefault(size = 10) Pageable paginacion){
-        return ResponseEntity.ok(topicoService.buscarTopicosActivos(paginacion));
+    public ResponseEntity<Page<DatosRespuestaTopico>> listadoTopicos(@RequestParam(name = "cursoId", required = false) Long cursoId,
+                                                                           @RequestParam(name = "year", required = false) Integer anio,
+                                                                           @PageableDefault(size=10) Pageable paginacion){
+        return ResponseEntity.ok(topicoService.buscarTopicosActivos(cursoId, anio, paginacion));
     }
 
     @PutMapping
