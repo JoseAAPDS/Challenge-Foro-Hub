@@ -7,18 +7,27 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
     private UsuarioRepository usuarioRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository){
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder){
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public DatosRespuestaUsuario registrarNuevoUsuario(DatosRegistroUsuario datosRegistroUsuario) {
-        Usuario nuevoUsuario = usuarioRepository.save(new Usuario(datosRegistroUsuario));
+        Usuario nuevoUsuario = new Usuario(datosRegistroUsuario);
+        //Encriptar contraseña
+        String contrasenaEncriptada = passwordEncoder.encode(nuevoUsuario.getContrasena());
+        nuevoUsuario.setContrasena(contrasenaEncriptada);
+        //Guardar nuevo usuario
+        usuarioRepository.save(nuevoUsuario);
+        //Crear DTO para enviar la respuesta
         DatosRespuestaUsuario datosRespuestaUsuario = new DatosRespuestaUsuario(nuevoUsuario.getId(),
                 nuevoUsuario.getNombre(), nuevoUsuario.getCorreoElectronico(),
                 nuevoUsuario.getPerfil().toString().toLowerCase());

@@ -2,8 +2,15 @@ package com.challenge.forohub.domain.usuario;
 
 import com.challenge.forohub.domain.usuario.dto.DatosActualizarUsuario;
 import com.challenge.forohub.domain.usuario.dto.DatosRegistroUsuario;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,7 +19,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "id")
 @Table(name = "usuarios")
 @Entity(name = "usuario")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,5 +50,41 @@ public class Usuario {
 
     public void desactivarUsuario() {
         this.activo = false;
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+       return List.of(new SimpleGrantedAuthority("ROLE_" + perfil.toString()));
+    }
+
+    @Override
+    public String getPassword() {
+        return contrasena;
+    }
+
+    @Override
+    public String getUsername() {
+        return correoElectronico;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return activo;
     }
 }
