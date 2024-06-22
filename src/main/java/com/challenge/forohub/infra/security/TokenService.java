@@ -25,7 +25,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("forohub")
                     .withSubject(usuario.getCorreoElectronico())
-                    .withClaim("id", usuario.getId())
+                    .withClaim("roles", usuario.getPerfil().name())
                     .withExpiresAt(generarFechaExpiracion())
                     .sign(algorithm);
         } catch (JWTCreationException exception){

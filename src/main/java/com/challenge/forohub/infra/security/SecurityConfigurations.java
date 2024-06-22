@@ -28,6 +28,8 @@ public class SecurityConfigurations {
         return httpSecurity.csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth.requestMatchers(HttpMethod.POST, "/login").permitAll())
+                .authorizeHttpRequests(auth-> auth.requestMatchers("/topicos/**","/respuestas/**").hasAnyRole("ESTUDIANTE","ADMINISTRADOR"))
+                .authorizeHttpRequests(auth-> auth.requestMatchers("/usuarios/**","/cursos/**").hasRole("ADMINISTRADOR"))
                 .authorizeHttpRequests(auth->auth.anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
