@@ -56,7 +56,7 @@ public class RespuestaController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity eliminarRespuesta(@PathVariable Long id){
-        respuestaService.desactivarRespuesta(id);
+        respuestaService.borrarRespuesta(id);
         return ResponseEntity.noContent().build();
 
     }

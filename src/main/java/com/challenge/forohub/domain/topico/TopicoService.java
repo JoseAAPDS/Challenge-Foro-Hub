@@ -1,6 +1,8 @@
 package com.challenge.forohub.domain.topico;
 
 import com.challenge.forohub.domain.curso.CursoRepository;
+import com.challenge.forohub.domain.respuesta.Respuesta;
+import com.challenge.forohub.domain.respuesta.RespuestaRepository;
 import com.challenge.forohub.domain.topico.dto.DatosActualizarTopico;
 import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
 import com.challenge.forohub.domain.topico.dto.DatosRespuestaTopico;
@@ -21,12 +23,14 @@ public class TopicoService {
     private TopicoRepository topicoRepository;
     private CursoRepository cursoRepository;
     private UsuarioRepository usuarioRepository;
+    private RespuestaRepository respuestaRepository;
 
     public TopicoService(TopicoRepository topicoRepository, CursoRepository cursoRepository,
-                         UsuarioRepository usuarioRepository){
+                         UsuarioRepository usuarioRepository, RespuestaRepository respuestaRepository){
         this.topicoRepository = topicoRepository;
         this.cursoRepository = cursoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.respuestaRepository = respuestaRepository;
     }
 
     public DatosRespuestaTopico registrarNuevoTopico(DatosRegistroTopico datosRegistroTopico){
@@ -54,12 +58,19 @@ public class TopicoService {
         if(cursoId != null && anio != null){
             LocalDateTime fechaInicio = LocalDateTime.of(anio, 1, 1,0,0,0);
             LocalDateTime fechaFinal = fechaInicio.plusYears(1L);
-            return topicoRepository.encontrarPorCursoActivoEnAnio(cursoId, fechaInicio, fechaFinal, paginacion)
-                    .map(DatosRespuestaTopico::new);
+            Page listaTopicos = topicoRepository.encontrarPorCursoActivoEnAnio(cursoId, fechaInicio, fechaFinal, paginacion);
+            if (listaTopicos.getContent().isEmpty()){
+                throw new EntityNotFoundException("Id or year not found");
+            }
+            return topicoRepository.encontrarPorCursoActivoEnAnio(cursoId, fechaInicio, fechaFinal, paginacion).map(DatosRespuestaTopico::new);
         }
 
         //Lista por curso
         if (cursoId != null){
+            Page listaTopicos = topicoRepository.findByActivoTrueAndCursoIdOrderByFechaCreacion(cursoId, paginacion);
+            if (listaTopicos.getContent().isEmpty()){
+                throw new EntityNotFoundException("Id not found");
+            }
             return topicoRepository.findByActivoTrueAndCursoIdOrderByFechaCreacion(cursoId, paginacion).map(DatosRespuestaTopico::new);
         }
 
@@ -67,6 +78,10 @@ public class TopicoService {
         if (anio != null){
             LocalDateTime fechaInicio = LocalDateTime.of(anio, 1, 1,0,0,0);
             LocalDateTime fechaFinal = fechaInicio.plusYears(1L);
+            Page listaTopicos = topicoRepository.findByActivoTrueAndFechaCreacionOrderByFechaCreacion(fechaInicio, fechaFinal ,paginacion);
+            if (listaTopicos.getContent().isEmpty()){
+                throw new EntityNotFoundException("year not found");
+            }
             return topicoRepository.findByActivoTrueAndFechaCreacionOrderByFechaCreacion(fechaInicio, fechaFinal ,paginacion).map(DatosRespuestaTopico::new);
         }
 
@@ -87,13 +102,19 @@ public class TopicoService {
                 topico.getCurso().getNombre());
     }
 
-    public void desactivarTopico(Long id) {
+    public void borrarTopico(Long id) {
         Optional<Topico> topico = topicoRepository.findById(id);
         if (topico.isEmpty()){
             throw new EntityNotFoundException("Topico with id " + id + " not found");
         }
+        List<Respuesta> respuestasPorTopico = respuestaRepository.findByTopicoId(id);
+        if(!respuestasPorTopico.isEmpty()){
+            for (Respuesta respuesta : respuestasPorTopico){
+                respuestaRepository.delete(respuesta);
+            }
+        }
         Topico topicoBorrar = topico.get();
-        topicoBorrar.desactivarTopico();
+        topicoRepository.delete(topicoBorrar);
     }
 
     public DatosRespuestaTopico buscarTopicoId(Long id) {

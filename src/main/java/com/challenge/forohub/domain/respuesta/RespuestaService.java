@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RespuestaService {
     private TopicoRepository topicoRepository;
@@ -45,7 +47,7 @@ public class RespuestaService {
     }
 
     public Page<DatosRetornoRespuesta> buscarRespuestasActivas(Pageable paginacion) {
-        return respuestaRepository.findByActivoTrue(paginacion).map(DatosRetornoRespuesta::new);
+        return respuestaRepository.findByActivoTrueOrderByFechaCreacion(paginacion).map(DatosRetornoRespuesta::new);
     }
 
     public DatosRetornoRespuesta actualizarRespuesta(DatosActualizarRespuesta datosActualizarRespuesta) {
@@ -66,12 +68,12 @@ public class RespuestaService {
         return new DatosRetornoRespuesta(respuesta);
     }
 
-    public void desactivarRespuesta(Long id) {
-        Respuesta respuesta = respuestaRepository.findByIdActivoTrue(id);
-        if (respuesta == null){
+    public void borrarRespuesta(Long id) {
+        Optional<Respuesta> respuesta = respuestaRepository.findById(id);
+        if (respuesta.isEmpty()){
             throw new EntityNotFoundException("Respuesta with id " + id + " not found");
         }
-        respuesta.desactivarRespuesta();
+        respuestaRepository.delete(respuesta.get());
     }
 
     public DatosRetornoRespuesta buscarRespuestaId(Long id) {

@@ -49,7 +49,7 @@ public class TopicoController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity eliminarTopico(@PathVariable Long id){
-        topicoService.desactivarTopico(id);
+        topicoService.borrarTopico(id);
         return ResponseEntity.noContent().build();
 
     }

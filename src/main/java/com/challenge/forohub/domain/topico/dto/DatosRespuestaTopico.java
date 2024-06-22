@@ -14,4 +14,5 @@ public record DatosRespuestaTopico(
         this(topico.getId(), topico.getTitulo(), topico.getMensaje(), topico.getFechaCreacion().toString(),
                 topico.getAutor().getNombre(), topico.getCurso().getNombre());
     }
+
 }
