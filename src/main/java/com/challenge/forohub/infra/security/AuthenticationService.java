@@ -18,13 +18,10 @@ public class AuthenticationService implements UserDetailsService {
 
     public AuthenticationService(UsuarioRepository usuarioRepository){
         this.usuarioRepository = usuarioRepository;
-
     }
 
     @Override
-    public UserDetails loadUserByUsername(String correoElectronico) throws EntityNotFoundException {
+    public UserDetails loadUserByUsername(String correoElectronico) throws UsernameNotFoundException {
         return usuarioRepository.findByCorreoElectronico(correoElectronico);
     }
-
-
 }
