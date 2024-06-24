@@ -34,7 +34,6 @@ public class AuthenticationController {
         Authentication authToken = new UsernamePasswordAuthenticationToken(datosAutenticacioUsuario.correoElectronico(),
                 datosAutenticacioUsuario.password());
         var usuarioAutenticado = authenticationManager.authenticate(authToken);
-        System.out.println("Estoy aqui " + usuarioAutenticado.isAuthenticated());
         var JWToken = tokenService.generarToken((Usuario) usuarioAutenticado.getPrincipal());
         return ResponseEntity.ok(new DatosJWToken(JWToken));
     }
