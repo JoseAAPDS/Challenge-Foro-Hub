@@ -46,7 +46,16 @@ public class RespuestaService {
         return retornoRespuesta;
     }
 
-    public Page<DatosRetornoRespuesta> buscarRespuestasActivas(Pageable paginacion) {
+    public Page<DatosRetornoRespuesta> buscarRespuestasActivas(Long topicoId, Pageable paginacion) {
+        //Lista por tópico
+        if (topicoId != null){
+            Page listaRespuestas = respuestaRepository.findByActivoTrueAndTopicoIdOrderByFechaCreacion(topicoId, paginacion);
+            if (listaRespuestas.getContent().isEmpty()){
+                throw new EntityNotFoundException("Id not found");
+            }
+            return respuestaRepository.findByActivoTrueAndTopicoIdOrderByFechaCreacion(topicoId, paginacion).map(DatosRetornoRespuesta::new);
+        }
+
         return respuestaRepository.findByActivoTrueOrderByFechaCreacion(paginacion).map(DatosRetornoRespuesta::new);
     }
 

@@ -2,6 +2,7 @@ package com.challenge.forohub.infra.security;
 
 import com.challenge.forohub.domain.usuario.UsuarioRepository;
 import com.challenge.forohub.domain.usuario.dto.DatosAutenticacioUsuario;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,7 +22,7 @@ public class AuthenticationService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String correoElectronico) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String correoElectronico) throws EntityNotFoundException {
         return usuarioRepository.findByCorreoElectronico(correoElectronico);
     }
 

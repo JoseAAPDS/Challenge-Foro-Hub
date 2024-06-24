@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface RespuestaRepository extends JpaRepository<Respuesta, Long> {
     Page<Respuesta> findByActivoTrueOrderByFechaCreacion(Pageable paginacino);
+    Page<Respuesta> findByActivoTrueAndTopicoIdOrderByFechaCreacion(Long topicoId, Pageable paginacion);
 
     @Query("""
             select r from respuesta r
@@ -19,4 +20,6 @@ public interface RespuestaRepository extends JpaRepository<Respuesta, Long> {
     Respuesta findByIdActivoTrue(Long id);
 
     List<Respuesta> findByTopicoId(Long id);
+
+
 }
