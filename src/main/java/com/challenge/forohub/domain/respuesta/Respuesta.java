@@ -34,7 +34,7 @@ public class Respuesta {
     public Respuesta(DatosRegistroRespuesta datosRegistroRespuesta, Usuario autor, Topico topico) {
         this.mensaje = datosRegistroRespuesta.mensaje();
         this.topico = topico;
-        this.fechaCreacion = datosRegistroRespuesta.fechaCreacion();
+        this.fechaCreacion = LocalDateTime.now();
         this.autor = autor;
         this.activo = true;
         this.solucion = false;

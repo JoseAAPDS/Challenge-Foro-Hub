@@ -11,8 +11,6 @@ public record DatosRegistroRespuesta(
         @NotNull
         Long idTopico,
         @NotNull
-        LocalDateTime fechaCreacion,
-        @NotNull
         Long idAutor
 ) {
 }

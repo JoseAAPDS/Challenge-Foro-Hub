@@ -12,8 +12,6 @@ public record DatosRegistroTopico(
         @NotBlank
         String mensaje,
         @NotNull
-        LocalDateTime fecha,
-        @NotNull
         Long idAutor,
         @NotNull
         Long idCurso) {

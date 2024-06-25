@@ -9,13 +9,13 @@ public record DatosRetornoRespuesta(
         String mensaje,
         Long idTopico,
         String tituloTopico,
-        LocalDateTime fechaCreacion,
+        String fechaCreacion,
         String autorRespuesta,
         Boolean solucion
 ) {
     public DatosRetornoRespuesta(Respuesta respuesta){
         this(respuesta.getId(), respuesta.getMensaje(), respuesta.getTopico().getId(),
-                respuesta.getTopico().getTitulo(), respuesta.getFechaCreacion(),
+                respuesta.getTopico().getTitulo(), respuesta.getFechaCreacion().toString(),
                 respuesta.getAutor().getNombre(), respuesta.getSolucion());
     }
 }
