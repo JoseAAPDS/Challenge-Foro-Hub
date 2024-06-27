@@ -1,20 +1,19 @@
 package com.challenge.forohub.domain.respuesta;
 
-import com.challenge.forohub.domain.curso.CursoRepository;
 import com.challenge.forohub.domain.respuesta.dto.DatosActualizarRespuesta;
 import com.challenge.forohub.domain.respuesta.dto.DatosRegistroRespuesta;
 import com.challenge.forohub.domain.respuesta.dto.DatosRetornoRespuesta;
 import com.challenge.forohub.domain.topico.Topico;
 import com.challenge.forohub.domain.topico.TopicoRepository;
-import com.challenge.forohub.domain.topico.dto.DatosActualizarTopico;
-import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
-import com.challenge.forohub.domain.topico.dto.DatosRespuestaTopico;
+import com.challenge.forohub.domain.usuario.Usuario;
 import com.challenge.forohub.domain.usuario.UsuarioRepository;
+import com.challenge.forohub.infra.errores.ValidacionRequerimientos;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Service
@@ -30,11 +29,11 @@ public class RespuestaService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public DatosRetornoRespuesta registrarRespuesta(DatosRegistroRespuesta datosRegistroRespuesta){
-        var usuario = usuarioRepository.findByIdActivoTrue(datosRegistroRespuesta.idAutor());
-        if (usuario == null){
-            throw new EntityNotFoundException("Usuario with id " + datosRegistroRespuesta.idAutor() + " not found");
-        }
+    public DatosRetornoRespuesta registrarRespuesta(DatosRegistroRespuesta datosRegistroRespuesta,
+                                                    Principal principal){
+        //El usuario que envía el token se asigna como autor de la respuesta.
+        Usuario usuario = (Usuario) usuarioRepository.findByCorreoElectronico(principal.getName());
+
         var topico = topicoRepository.findByIdActivoTrue(datosRegistroRespuesta.idTopico());
         if (topico == null){
             throw new EntityNotFoundException("Topico with id " + datosRegistroRespuesta.idTopico() + " not found");
@@ -59,30 +58,57 @@ public class RespuestaService {
         return respuestaRepository.findByActivoTrueOrderByFechaCreacion(paginacion).map(DatosRetornoRespuesta::new);
     }
 
-    public DatosRetornoRespuesta actualizarRespuesta(DatosActualizarRespuesta datosActualizarRespuesta) {
+    public DatosRetornoRespuesta actualizarRespuesta(DatosActualizarRespuesta datosActualizarRespuesta,
+                                                     Principal principal) {
+        Usuario usuario = (Usuario) usuarioRepository.findByCorreoElectronico(principal.getName());
         Respuesta respuesta = respuestaRepository.findByIdActivoTrue(datosActualizarRespuesta.id());
         if (respuesta == null){
             throw new EntityNotFoundException("Respuesta with id " + datosActualizarRespuesta.id() + " not found");
         }
-        respuesta.actualizarDatos(datosActualizarRespuesta);
-        return new DatosRetornoRespuesta(respuesta);
+        //Solamente el autor de la respuesta puede modificarla
+        if (usuario.getId() == respuesta.getAutor().getId()){
+            respuesta.actualizarDatos(datosActualizarRespuesta);
+            return new DatosRetornoRespuesta(respuesta);
+        } else {
+        throw new ValidacionRequerimientos("Unable to update a response from another author");
+        }
+
     }
 
-    public DatosRetornoRespuesta marcarSolucion(Long id){
+    public DatosRetornoRespuesta marcarSolucion(Long id, Principal principal){
+        Usuario usuario = (Usuario) usuarioRepository.findByCorreoElectronico(principal.getName());
         Respuesta respuesta = respuestaRepository.findByIdActivoTrue(id);
         if (respuesta == null){
             throw new EntityNotFoundException("Respuesta with id " + id + " not found");
         }
-        respuesta.marcarSolucion();
-        return new DatosRetornoRespuesta(respuesta);
+        //Solamente el autor del tópico puede marcar la respuesta como solucíón
+        if (usuario.getId() == respuesta.getTopico().getAutor().getId()){
+            respuesta.marcarSolucion();
+            return new DatosRetornoRespuesta(respuesta);
+        } else {
+            throw new ValidacionRequerimientos("Only the topic author can check the answer as a solution");
+        }
     }
 
-    public void borrarRespuesta(Long id) {
+    public void borrarRespuesta(Long id, Principal principal) {
+        //Usuario que solicita la acción
+        Usuario usuario = (Usuario) usuarioRepository.findByCorreoElectronico(principal.getName());
+
+        //Revisa si la respuesta existe
         Optional<Respuesta> respuesta = respuestaRepository.findById(id);
         if (respuesta.isEmpty()){
             throw new EntityNotFoundException("Respuesta with id " + id + " not found");
         }
-        respuestaRepository.delete(respuesta.get());
+
+        //Usuario con rol "administrador" tiene permitido borrar respuestas
+        if(usuario.getPerfil().toString().equals("ADMINISTRADOR")){
+            respuestaRepository.delete(respuesta.get());
+        } else if (respuesta.get().getAutor().getId() == usuario.getId()) {
+            //Borra la respuesta si el usuario que solicita la acción es el autor de la respuesta.
+            respuestaRepository.delete(respuesta.get());
+        } else {
+            throw new ValidacionRequerimientos("Unable to erase a response from another author");
+        }
     }
 
     public DatosRetornoRespuesta buscarRespuestaId(Long id) {

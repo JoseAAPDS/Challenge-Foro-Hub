@@ -9,8 +9,5 @@ public record DatosRegistroRespuesta(
         @NotBlank
         String mensaje,
         @NotNull
-        Long idTopico,
-        @NotNull
-        Long idAutor
-) {
+        Long idTopico) {
 }

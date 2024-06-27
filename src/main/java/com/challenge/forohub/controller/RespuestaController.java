@@ -4,9 +4,6 @@ import com.challenge.forohub.domain.respuesta.RespuestaService;
 import com.challenge.forohub.domain.respuesta.dto.DatosActualizarRespuesta;
 import com.challenge.forohub.domain.respuesta.dto.DatosRegistroRespuesta;
 import com.challenge.forohub.domain.respuesta.dto.DatosRetornoRespuesta;
-import com.challenge.forohub.domain.topico.dto.DatosActualizarTopico;
-import com.challenge.forohub.domain.topico.dto.DatosRegistroTopico;
-import com.challenge.forohub.domain.topico.dto.DatosRespuestaTopico;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -19,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/respuestas")
@@ -37,8 +35,8 @@ public class RespuestaController {
     @PostMapping
     @Transactional
     public ResponseEntity<DatosRetornoRespuesta> registrarNuevaRespuesta(@RequestBody @Valid DatosRegistroRespuesta datosRegistroRespuesta,
-                                                                         UriComponentsBuilder uriComponentsBuilder){
-        DatosRetornoRespuesta retornoRespuesta = respuestaService.registrarRespuesta(datosRegistroRespuesta);
+                                                                         UriComponentsBuilder uriComponentsBuilder, Principal principal){
+        DatosRetornoRespuesta retornoRespuesta = respuestaService.registrarRespuesta(datosRegistroRespuesta, principal);
         URI url = uriComponentsBuilder.path("/respuestas/{id}").buildAndExpand(retornoRespuesta.id()).toUri();
         return ResponseEntity.created(url).body(retornoRespuesta);
     }
@@ -56,28 +54,36 @@ public class RespuestaController {
 
     @Operation(summary = "Modifica una respuesta",
             description = """
-            Solamente puede modificarse mensaje de la respuesta.
+            Solamente puede modificarse el mensaje de la respuesta. Únicamente el autor de la
+            respuesta puede modificarla.
             """)
     @PutMapping
     @Transactional
-    public ResponseEntity<DatosRetornoRespuesta> actualizarRespuesta(@RequestBody @Valid DatosActualizarRespuesta datosActualizarRespuesta){
-        return ResponseEntity.ok(respuestaService.actualizarRespuesta(datosActualizarRespuesta));
+    public ResponseEntity<DatosRetornoRespuesta> actualizarRespuesta(@RequestBody @Valid DatosActualizarRespuesta datosActualizarRespuesta,
+                                                                     Principal principal){
+        return ResponseEntity.ok(respuestaService.actualizarRespuesta(datosActualizarRespuesta, principal));
     }
 
-    @Operation(summary = "Marca una respuesta como solución del tópico asociado")
+    @Operation(summary = "Marca una respuesta como solución del tópico asociado",
+    description = """
+            Aclaración: Solo el autor del tópico puede marcar una respuesta como solución al tópico"
+            """)
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<DatosRetornoRespuesta> marcarComoSolucion(@PathVariable Long id){
-        return ResponseEntity.ok(respuestaService.marcarSolucion(id));
+    public ResponseEntity<DatosRetornoRespuesta> marcarComoSolucion(@PathVariable Long id, Principal principal){
+        return ResponseEntity.ok(respuestaService.marcarSolucion(id, principal));
     }
 
-    @Operation(summary = "Elimina una respuesta")
+    @Operation(summary = "Elimina una respuesta",
+            description = """
+            Aclaración: No pueden eliminarse respuestas creadas por otros usuarios, a excepción de
+            usuarios con rol "administrador" que pueden borrar cualquier respuesta.
+            """)
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity eliminarRespuesta(@PathVariable Long id){
-        respuestaService.borrarRespuesta(id);
+    public ResponseEntity eliminarRespuesta(@PathVariable Long id, Principal principal){
+        respuestaService.borrarRespuesta(id, principal);
         return ResponseEntity.noContent().build();
-
     }
 
     @Operation(summary = "Busca una respuesta por id")
