@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/topicos")
@@ -35,8 +36,9 @@ public class TopicoController {
     @PostMapping
     @Transactional
     public ResponseEntity<DatosRespuestaTopico> registrarNuevoTopico(@RequestBody @Valid DatosRegistroTopico nuevoTopico,
-                                                                    UriComponentsBuilder uriComponentsBuilder){
-        DatosRespuestaTopico datosRespuestaTopico = topicoService.registrarNuevoTopico(nuevoTopico);
+                                                                     UriComponentsBuilder uriComponentsBuilder,
+                                                                     Principal principal){
+        DatosRespuestaTopico datosRespuestaTopico = topicoService.registrarNuevoTopico(nuevoTopico, principal);
         URI url = uriComponentsBuilder.path("/topicos/{id}").buildAndExpand(datosRespuestaTopico.id()).toUri();
         return ResponseEntity.created(url).body(datosRespuestaTopico);
     }
@@ -55,24 +57,27 @@ public class TopicoController {
 
     @Operation(summary = "Modifica un tópico",
             description = """
-            Solamente pueden modificarse el título y el mensaje del tópico.
+            Solamente pueden modificarse el título y el mensaje del tópico. No pueden modificarse
+            tópicos creados por otros usuarios.
             """)
     @PutMapping
     @Transactional
-    public ResponseEntity<DatosRespuestaTopico> actualizarTopico(@RequestBody @Valid DatosActualizarTopico datosActualizarTopico){
-        return ResponseEntity.ok(topicoService.actualizarTopico(datosActualizarTopico));
+    public ResponseEntity<DatosRespuestaTopico> actualizarTopico(@RequestBody @Valid DatosActualizarTopico datosActualizarTopico,
+                                                                 Principal principal){
+        return ResponseEntity.ok(topicoService.actualizarTopico(datosActualizarTopico, principal));
     }
 
     @Operation(summary = "Elimina un tópico",
             description = """
             Aclaración: La eliminación de un tópico eliminará también las respuestas asociadas al mismo.
+            No pueden eliminarse tópicos creados por otros usuarios, a excepción de usuarios con rol
+            "administrador" que pueden borrar cualquier tópico.
             """)
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity eliminarTopico(@PathVariable Long id){
-        topicoService.borrarTopico(id);
+    public ResponseEntity eliminarTopico(@PathVariable Long id, Principal principal){
+        topicoService.borrarTopico(id, principal);
         return ResponseEntity.noContent().build();
-
     }
 
     @Operation(summary = "Busca un tópico por id")

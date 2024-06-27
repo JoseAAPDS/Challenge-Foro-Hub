@@ -43,4 +43,10 @@ public class TratadorDeErrores {
         }
     }
 
+    @ExceptionHandler(ValidacionRequerimientos.class)
+    public ResponseEntity tratarErrorValidacionRequerimientos(ValidacionRequerimientos e){
+        var errores = e.getMessage();
+        return ResponseEntity.badRequest().body(errores);
+    }
+
 }
